@@ -23,7 +23,7 @@ model users {
 model rooms {
   id String @id @default(uuid())
   name String
-  description String
+  description String?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   user users @relation(fields: [user_id], references: [id])

@@ -2,11 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateMessageDto } from './dto/messages.dto';
 import { IMessageResponse } from './interfaces/messages.interfaces';
+import { MyGateway } from 'src/gateway/gateway';
 
 @Injectable()
 export class MessagesService {
 
-    constructor(private prisma: PrismaService) {}
+    constructor(
+        private prisma: PrismaService,
+        private gateway: MyGateway
+    ) {}
 
     async createMessage(data: CreateMessageDto, roomId: string, userId: string): Promise<IMessageResponse> {
         const roomExists = await this.prisma.rooms.findUnique({
@@ -17,7 +21,7 @@ export class MessagesService {
             throw new NotFoundException("Room not found")
         }
 
-        const createMessage = this.prisma.messages.create({
+        const createMessage = await this.prisma.messages.create({
             data: {
                 ...data,
                 room_id: roomId,
@@ -44,6 +48,8 @@ export class MessagesService {
                 }
             }
         })
+
+        this.gateway.sendMessage(createMessage)
         
         return createMessage
     }

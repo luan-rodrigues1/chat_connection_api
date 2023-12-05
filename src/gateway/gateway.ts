@@ -1,10 +1,9 @@
 import { 
-    MessageBody, 
-    SubscribeMessage, 
     WebSocketGateway, 
     WebSocketServer 
 } from "@nestjs/websockets";
 import { Server } from 'socket.io';
+import { IMessageResponse } from "src/messages/interfaces/messages.interfaces";
 
 @WebSocketGateway({
     cors: {
@@ -14,37 +13,22 @@ import { Server } from 'socket.io';
     pingInterval: 10000,
     pingTimeout: 15000,
 })
-export class MyGateway  {
-    // onModuleInit() {
-    //     throw new Error("Method not implemented.");
-    // }
+export class MyGateway {
     
     @WebSocketServer()
     server: Server
 
-    // onModuleInit() {
-    //     this.server.on("connection", (socket) => {
-    //         console.log(socket.id)
-    //         console.log("connected")
-    //         socket.join("sala 1")
-    //         socket.join("sala 2")
-    //         // this.server.of("/").adapter.on("create-room", (room) => {
-    //         //     console.log(`room ${room} was created`);
-    //         // });
 
-    //         this.server.of("/").adapter.on("create-room", (room) => {
-    //             console.log(`room ${room} was created`);
-    //         });
-              
-    //     })
-    // }
-
-    @SubscribeMessage("newMessage")
-    onNewMessage(@MessageBody() body: string) {
-        // this.server.emit("onMessage", {
-        //     msg: "New Message",
-        //     content: body
-        // })
-        this.server.emit("teste", body)
+    sendMessage(messageData: IMessageResponse) {
+        
+        this.server.emit(messageData.room.id, {
+            content: messageData.content,
+            created_at: messageData.created_at,
+            user: {
+                id: messageData.user.id,
+                name: messageData.user.name
+            }
+        }) 
     }
+
 }

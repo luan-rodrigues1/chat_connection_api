@@ -1,7 +1,7 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
-import { UserResponse } from './interfaces/users.interfaces';
+import { IUserResponse } from "./interfaces/users.interfaces";
 import * as bcrypt from 'bcrypt';
 import { users } from '@prisma/client';
 
@@ -9,7 +9,7 @@ import { users } from '@prisma/client';
 export class UsersService {
     constructor(private prisma: PrismaService) {}
 
-    async createUser(data: CreateUserDto): Promise<UserResponse> {
+    async createUser(data: CreateUserDto): Promise<IUserResponse> {
 
         const emailExists = await this.prisma.users.findUnique({
             where: {email: data.email}
@@ -31,7 +31,7 @@ export class UsersService {
         });
     }
 
-    async findAllUsers(): Promise<UserResponse[]> {
+    async findAllUsers(): Promise<IUserResponse[]> {
         const listUsers = await this.prisma.users.findMany({
             select: {
                 id: true,
@@ -43,7 +43,7 @@ export class UsersService {
         return listUsers
     }
 
-    async findOneUser(userId: string): Promise<UserResponse> {
+    async findOneUser(userId: string): Promise<IUserResponse> {
         const searchUser = await this.prisma.users.findUnique({
             where: {id: userId},
             select: {
@@ -60,7 +60,7 @@ export class UsersService {
         return searchUser
     }
 
-    async updateUser(userId: string, data: UpdateUserDto): Promise<UserResponse> {
+    async updateUser(userId: string, data: UpdateUserDto): Promise<IUserResponse> {
         const userExists = await this.prisma.users.findUnique({
             where: {id: userId}
         })

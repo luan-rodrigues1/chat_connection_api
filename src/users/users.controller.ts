@@ -11,7 +11,7 @@ import {
 } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { CreateUserDto, UpdateUserDto } from "./dto/users.dto";
-import { UserResponse } from "./interfaces/users.interfaces";
+import { IUserResponse } from "./interfaces/users.interfaces";
 import { users } from "@prisma/client";
 
 @Controller("users")
@@ -19,17 +19,17 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @Post()
-    async create(@Body() createUserDto: CreateUserDto): Promise<UserResponse> {
+    async create(@Body() createUserDto: CreateUserDto): Promise<IUserResponse> {
         return await this.usersService.createUser(createUserDto);
     }
 
     @Get()
-    async findAll(): Promise<UserResponse[]> {
+    async findAll(): Promise<IUserResponse[]> {
         return await this.usersService.findAllUsers();
     }
 
     @Get("/:id")
-    async findOne(@Param("id", ParseUUIDPipe) id: string): Promise<UserResponse> {
+    async findOne(@Param("id", ParseUUIDPipe) id: string): Promise<IUserResponse> {
         return await this.usersService.findOneUser(id);
     }
 
@@ -38,7 +38,7 @@ export class UsersController {
         @Param(
             "id", ParseUUIDPipe) id: string, 
             @Body() updateUserDto: UpdateUserDto
-        ): Promise<UserResponse> {
+        ): Promise<IUserResponse> {
             
         return await this.usersService.updateUser(id, updateUserDto);
     }

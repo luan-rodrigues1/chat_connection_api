@@ -40,10 +40,9 @@ export class UsersController {
     @Put("/:id")
     @UseGuards(AuthGuard)
     async update(
-        @Param(
-            "id", ParseUUIDPipe) id: string, 
-            @Body() updateUserDto: UpdateUserDto,
-            @Request() requestData: ITokenUserRequest
+        @Param("id", ParseUUIDPipe) id: string, 
+        @Body() updateUserDto: UpdateUserDto,
+        @Request() requestData: ITokenUserRequest
         ): Promise<IUserResponse> {
             
         return await this.usersService.updateUser(id, updateUserDto, requestData.user.sub);

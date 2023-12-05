@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { CreateUserDto, UpdateUserDto } from './dto/users.dto';
 import { IUserResponse } from "./interfaces/users.interfaces";
@@ -60,13 +60,17 @@ export class UsersService {
         return searchUser
     }
 
-    async updateUser(userId: string, data: UpdateUserDto): Promise<IUserResponse> {
+    async updateUser(userId: string, data: UpdateUserDto, tokenId: string): Promise<IUserResponse> {
         const userExists = await this.prisma.users.findUnique({
             where: {id: userId}
         })
 
         if (!userExists) {
             throw new NotFoundException("User not found");
+        }
+
+        if (userExists.id !== tokenId) {
+            throw new ForbiddenException("You must be the account owner")
         }
 
         if (data.email) {
@@ -100,13 +104,17 @@ export class UsersService {
         return updateUser
     }
 
-    async removeUser(userId: string): Promise<users> {
+    async removeUser(userId: string, tokenId: string): Promise<users> {
         const searchUser = await this.prisma.users.findUnique({
             where: {id: userId}
         })
 
         if (!searchUser) {
             throw new NotFoundException("User not found");
+        }
+
+        if (searchUser.id !== tokenId) {
+            throw new ForbiddenException("You must be the account owner")
         }
 
         return await this.prisma.users.delete({

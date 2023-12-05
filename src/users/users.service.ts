@@ -21,7 +21,7 @@ export class UsersService {
 
         data.password = await bcrypt.hash(data.password, 10);
         
-        return this.prisma.users.create({
+        return await this.prisma.users.create({
           data,
           select: {
             id: true,

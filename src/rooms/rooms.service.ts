@@ -9,7 +9,7 @@ export class RoomsService {
     constructor(private prisma: PrismaService) {}
 
     async createRoom(data: CreateRoomDto, userId: string): Promise<IRoomResponse> {
-        return this.prisma.rooms.create({
+        return await this.prisma.rooms.create({
             data: {...data, user_id: userId},
             select: {
                 id: true,
